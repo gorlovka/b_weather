@@ -20,7 +20,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::post('/data', function (Request $request, JsonRpcServer $server, WeatherController $controller) {
-    
-    return $server->handle($request, $controller);
-});
+//Route::post('/data', function (Request $request, JsonRpcServer $server, WeatherController $controller) {
+//    
+//    return $server->handle($request, $controller);
+//});

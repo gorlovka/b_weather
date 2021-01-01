@@ -22,7 +22,7 @@ class JsonRpcServer
         $errorCode = null;
         
         /**
-         * на случай если будет ошибка в парсинге
+         * на случай если будет ошибка в парсинге, это поле должно быть в null
          */
         $contentId = null;
         
@@ -50,7 +50,8 @@ class JsonRpcServer
             return JsonRpcResponse::success($result, $contentId);
         }
         catch (Exception $e)
-        {
+        {            
+            
             return JsonRpcResponse::error($e->getMessage(), $contentId,
                         $errorCode);
         }
