@@ -7,8 +7,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\History;
+use Illuminate\Support\Facades\Validator;
 use function collect;
-use function dump;
 
 class WeatherController extends Controller
 {
@@ -26,16 +26,61 @@ class WeatherController extends Controller
      */
     public function weather_getByDate(array $params)
     {
-
         $date = collect($params)->get('date', '');
+
+
+        $validator = Validator::make([
+                 'date' => $date,
+                    ],
+                    [
+                       'date' => 'required|date'
+                    ],
+                    [
+                       'required' => 'Date should be specified',
+                       'date' => 'Wrong date format',
+        ]);
+
+
+        if ($validator->fails()) {
+            
+            $messageErrorFirst = $validator->getMessageBag()
+                  ->first();
+
+            throw new \Exception($messageErrorFirst);
+        }
+
+
 
         $historyModel = History::query()
               ->where('date_at', '=', $date)
               ->first();
 
+
+
         $temperature = $historyModel ? $historyModel->getTemp() : false;
 
-        return $temperature;
+        return [
+           'temperature' => $temperature
+        ];
+    }
+
+    public function weather_getHistory(array $params)
+    {
+        $lastDays = collect($params)->get('lastDays', '');
+
+
+        $historyModels = History::query()
+              ->limit($lastDays)
+              ->orderByDesc('date_at')
+              ->get();
+
+        /**
+         * в проекте, нужно использовать ресурсы для извлечения данных
+         * из моделей, а не передевать полностью модель как тут
+         */
+        return [
+          'lastDays' => $historyModels
+        ];
     }
 
 }
